@@ -1,0 +1,9 @@
+{$SITE_ADDRESS} {
+	handle /api/* {
+		reverse_proxy {$API_UPSTREAM}
+	}
+
+	handle {
+		reverse_proxy frontend:80
+	}
+}
