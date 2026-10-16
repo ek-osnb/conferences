@@ -1,0 +1,12 @@
+.text-measure {
+  max-width: 70ch;
+}
+
+.card-link-hover {
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.card-link-hover:hover,
+.card-link-hover:focus-within {
+  box-shadow: var(--bs-box-shadow);
+}
