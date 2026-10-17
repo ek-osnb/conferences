@@ -1,0 +1,57 @@
+# Change by hand before you use it:
+#   your-github-user  your GitHub user name in lower case
+#   0.1.0             the version you want to run (your git tag without the "v")
+#   10.0.2.10         the database VM's private IP, if yours is different
+# On the VM, save this file as compose.yaml next to the Caddyfile and .env.
+
+name: conferences
+
+services:
+
+  api:
+    image: ghcr.io/your-github-user/conferences-api:0.1.0
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://10.0.2.10:3306/conferences
+      DB_USERNAME: ${DB_USERNAME:-conferences}
+      DB_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "-o", "/dev/null", "http://localhost:8080/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+
+  frontend:
+    image: ghcr.io/your-github-user/conferences-frontend:0.1.0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  caddy:
+    image: caddy:2.11-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      API_UPSTREAM: api:8080
+      # Put the VM's DNS name here instead of ":80" to get HTTPS
+      SITE_ADDRESS: ":80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+
+volumes:
+  caddy_data:
+  caddy_config:
