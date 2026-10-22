@@ -1,8 +1,5 @@
-# Change by hand before you use it:
-#   your-github-user  your GitHub user name in lower case
-#   0.1.0             the version you want to run (your git tag without the "v")
-#   10.0.2.10         the database VM's private IP, if yours is different
-# On the VM, save this file as compose.yaml next to the Caddyfile and .env.
+# Change the image for the frontend and API.
+# On the VM, save this file as compose.yaml next to .env.
 
 name: conferences
 

@@ -1,3 +1,4 @@
+# Change the image for the frontend and API.
 # On the VM, save this file as compose.yaml next to .env.
 
 name: conferences-db
